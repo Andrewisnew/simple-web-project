@@ -1,17 +1,6 @@
-<%@ page import="java.lang.reflect.Array" %>
-<%@ page import="java.util.Arrays" %>
-<%@ page import="java.util.concurrent.TimeUnit" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%--<html>--%>
-<%--<head>--%>
-<%--<title>gaga</title>--%>
-<%--</head>--%>
-<%--<body>--%>
-<%--${textA}--%>
-<%--${textB}--%>
-<%--</body>--%>
-<%--</html>--%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <html>
 <head>
@@ -55,28 +44,29 @@
         }
         if(i == cookies.length-1){
             Cookie cookie = new Cookie("amountOfJSPViews", "1");
-            cookie.setMaxAge(1000000000);
+            cookie.setMaxAge(60 * 60);
             response.addCookie(cookie);
         }
     }
 %>
+<fmt:setBundle basename="data" />
 <p>
-    <label>Get element by index: </label>
+    <label><fmt:message key="get"/></label>
     <input type="text" name="username" id="get">
     <button type="button" onclick="doIt('GET')">GET</button>
 </p>
 <p>
-    <label>Add new element: </label>
+    <label><fmt:message key="post"/></label>
     <input type="text" name="username" id="post">
     <button type="button" onclick="doIt('POST')">POST</button>
 </p>
 <p>
-    <label>Update first element: </label>
+    <label><fmt:message key="put"/></label>
     <input type="text" name="username" id="put">
     <button type="button" onclick="doIt('PUT')">PUT</button>
 </p>
 <p>
-    <label>Remove element by index: </label>
+    <label><fmt:message key="delete"/></label>
     <input type="text" name="username" id="delete">
     <button type="button" onclick="doIt('DELETE')">DELETE</button>
 </p>

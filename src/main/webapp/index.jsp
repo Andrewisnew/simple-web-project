@@ -1,3 +1,6 @@
+<%@ page import="java.lang.reflect.Array" %>
+<%@ page import="java.util.Arrays" %>
+<%@ page import="java.util.concurrent.TimeUnit" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%--<html>--%>
@@ -41,7 +44,22 @@
     </script>
 </head>
 <body>
+<%
+    Cookie[] cookies = request.getCookies();
 
+    for(int i = 0; i < cookies.length; i++) {
+        if(cookies[i].getName().equals("amountOfJSPViews")){
+            cookies[i].setValue(String.valueOf(Integer.parseInt(cookies[i].getValue()) + 1));
+            response.addCookie(cookies[i]);
+            break;
+        }
+        if(i == cookies.length-1){
+            Cookie cookie = new Cookie("amountOfJSPViews", "1");
+            cookie.setMaxAge(1000000000);
+            response.addCookie(cookie);
+        }
+    }
+%>
 <p>
     <label>Get element by index: </label>
     <input type="text" name="username" id="get">
@@ -62,6 +80,8 @@
     <input type="text" name="username" id="delete">
     <button type="button" onclick="doIt('DELETE')">DELETE</button>
 </p>
+<h4>Amount of JSP views : </h4>
+${cookie.get("amountOfJSPViews").value}
 <h4>RESULT: </h4>
 <p>${sessionScope.INFO}</p>
 <h4>Inner state:</h4>

@@ -1,10 +1,15 @@
 package servlets;
 
+import org.json.JSONObject;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SimpleServlet extends HttpServlet {
     private static final String INFO = "INFO";
@@ -13,20 +18,20 @@ public class SimpleServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         stringList.add(request.getParameter("value"));
-        System.out.println("POST");
         HttpSession session = request.getSession();
         session.setAttribute(INFO, "Added element:" + request.getParameter("value"));
+        setJSONResponse(response, stringList.get(stringList.size() - 1));
         setStringListSessionParam(request);
     }
 
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("PUT");
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         try {
             String prevValue = stringList.set(0, request.getParameter("value"));
             session.setAttribute(INFO, "Change first element (" + prevValue
                     + " => " + request.getParameter("value") + ")");
+            setJSONResponse(response, prevValue);
         }catch (IndexOutOfBoundsException e) {
             session.setAttribute(INFO, "List is empty");
         }
@@ -34,12 +39,12 @@ public class SimpleServlet extends HttpServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("DELETE");
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         try {
             String removedValue = stringList.remove(Integer.parseInt(request.getParameter("value")));
             session.setAttribute(INFO, "Removed value: " + removedValue);
+            setJSONResponse(response, removedValue);
         }catch (IndexOutOfBoundsException e) {
             session.setAttribute(INFO, "There are only " + stringList.size() + " elements in list");
         }catch (NumberFormatException e) {
@@ -51,11 +56,11 @@ public class SimpleServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("GET");
         HttpSession session = request.getSession();
         try {
             String value = stringList.get(Integer.parseInt(request.getParameter("value")));
             session.setAttribute(INFO, value);
+            setJSONResponse(response, value);
         }catch (IndexOutOfBoundsException e) {
             session.setAttribute(INFO, "There are only " + stringList.size() + " elements in list");
         }catch (NumberFormatException e) {
@@ -69,5 +74,14 @@ public class SimpleServlet extends HttpServlet {
         if(session.getAttribute("state") == null) {
             session.setAttribute("state", stringList);
         }
+    }
+
+    private void setJSONResponse(HttpServletResponse response, String value) throws IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        JSONObject obj = new JSONObject();
+        obj.put("value", value);
+        out.println(obj.toString());
+        out.close();
     }
 }

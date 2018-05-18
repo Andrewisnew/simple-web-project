@@ -7,9 +7,7 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class SimpleServlet extends HttpServlet {
     private static final String INFO = "INFO";
